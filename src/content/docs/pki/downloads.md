@@ -127,4 +127,4 @@ Get-FileHash -Algorithm SHA256 -LiteralPath ./altasci-root-ca.pem
 
 这些文件为 CA 证书或 CA 证书链，不是应用的终端证书。应根据具体服务的配置要求选用；下载本身不会修改系统或应用的信任配置。需要导入信任库时，应先确认颁发者与适用范围，并通过可信渠道核对根证书指纹。
 
-本文仅提供文件下载与信息核对，不表示这些 CA 已被所有浏览器或操作系统默认信任。基础概念见 [PKI 基础概念](/docs/pki/overview/)，排查验证问题见 [证书验证与排查](/docs/pki/verification/)。
+本文仅提供文件下载与信息核对，不表示这些 CA 已被所有浏览器或操作系统默认信任。基础概念见 [PKI 基础概念](/docs/pki/overview/)。
