@@ -1,0 +1,111 @@
+---
+import { getCollection } from 'astro:content';
+import { categories } from '../data/categories';
+import Icon from '../components/Icon.astro';
+import '../styles/global.css';
+import '../styles/theme.css';
+interface Props { title?: string; description?: string }
+const { title = '文档中心', description = 'AltasCI 文档中心：让知识井然有序，让协作更进一步。' } = Astro.props;
+const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
+const path = Astro.url.pathname;
+const active = (url: string) => path.replace(/\/$/, '') === url.replace(/\/$/, '');
+const searchData = docs.map(d => ({ title: d.data.title, description: d.data.description, body: d.body, category: categories.find(c => c.id === d.data.category)?.name, href: `/docs/${d.id}/` }));
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} /><meta name="theme-color" content="#f8f9fc" />
+    <script is:inline>
+      (() => {
+        const key = 'altasci-theme';
+        const system = window.matchMedia('(prefers-color-scheme: dark)');
+        let preference = null;
+        try { const saved = localStorage.getItem(key); if (saved === 'light' || saved === 'dark') preference = saved; } catch {}
+        function applyTheme() {
+          const theme = preference || (system.matches ? 'dark' : 'light');
+          document.documentElement.dataset.theme = theme;
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#111827' : '#f8f9fc');
+          const button = document.querySelector('.theme-toggle');
+          const label = theme === 'dark' ? '切换到浅色模式' : '切换到深色模式';
+          button?.setAttribute('aria-label', label);
+          button?.setAttribute('title', label);
+          button?.setAttribute('aria-pressed', String(theme === 'dark'));
+        }
+        applyTheme();
+        document.addEventListener('DOMContentLoaded', applyTheme, { once: true });
+        document.addEventListener('click', event => {
+          if (!(event.target instanceof Element) || !event.target.closest('.theme-toggle')) return;
+          preference = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          try { localStorage.setItem(key, preference); } catch {}
+          applyTheme();
+        });
+        system.addEventListener('change', () => { if (preference === null) applyTheme(); });
+        window.addEventListener('storage', event => {
+          if (event.key !== key && event.key !== null) return;
+          preference = event.newValue === 'light' || event.newValue === 'dark' ? event.newValue : null;
+          applyTheme();
+        });
+      })();
+    </script>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <title>{title} · AltasCI Docs</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳转到内容</a>
+    <header class="header">
+      <a class="brand" href="/" aria-label="AltasCI 文档首页"><span class="brand-picture"><img class="brand-logo" src="/brand/altasci-logo-abg.png" width="44" height="44" alt="" /></span><span><span class="brand-name">AltasCI</span><span class="brand-divider"></span><span class="brand-docs">Docs</span></span></a>
+      <nav class="top-nav" aria-label="主导航"><a class={path === '/' || path.startsWith('/docs') || path.startsWith('/categories') ? 'selected' : ''} href="/">文档中心</a><a class={active('/docs/reference/changelog') ? 'selected' : ''} href="/docs/reference/changelog/">更新日志 <span class="new-dot"></span></a></nav>
+      <div class="header-right"><button class="search-trigger" data-search-open><Icon name="search" size={16} /><span>搜索文档...</span><kbd>Ctrl K</kbd></button><button class="theme-toggle" type="button" aria-label="切换到深色模式" title="切换到深色模式" aria-pressed="false"><Icon name="moon" size={18} class="theme-moon" /><Icon name="sun" size={18} class="theme-sun" /></button><span class="version"><span></span> v1.0</span><button class="mobile-toggle icon-button" aria-label="展开导航" aria-expanded="false"><Icon name="menu" /></button></div>
+    </header>
+    <div class="page-shell">
+      <aside class="sidebar" id="sidebar" aria-label="文档导航">
+        <div class="workspace-label">工作空间 <span>知识库</span></div>
+        <a class:list={['overview-link', { active: active('/') }]} href="/"><Icon name="home" size={18} />文档概览</a>
+        <div class="sidebar-separator"></div>
+        {categories.map(category => <details class="nav-group" open><summary><span><Icon name={category.icon} size={17} />{category.name}</span><Icon name="down" size={13} /></summary><div class="nav-items">{docs.filter(d => d.data.category === category.id).map(doc => <a class:list={[{ active: active(`/docs/${doc.id}`) }]} href={`/docs/${doc.id}/`}>{doc.data.title}{doc.id.endsWith('changelog') && <span class="tiny-badge">新</span>}</a>)}</div></details>)}
+        <a class="sidebar-help" href="/docs/help/faq/"><span class="help-icon"><Icon name="help" size={20} /></span><strong>需要一点帮助？</strong><p>在常见问题中寻找答案</p><span class="help-action">查看常见问题 <Icon name="arrow" size={14} /></span></a>
+        <div class="sidebar-bottom"><span class="status-dot"></span> 持续整理，持续进步 <span>↗</span></div>
+      </aside>
+      <main id="main"><slot /></main>
+    </div>
+    <dialog class="search-dialog" aria-labelledby="search-title"><div class="search-input-wrap"><Icon name="search" /><label class="sr-only" id="search-title" for="search-input">搜索文档</label><input id="search-input" type="search" placeholder="搜索标题、内容或关键词…" autocomplete="off" /><button class="close-search" aria-label="关闭搜索">Esc</button></div><div id="search-results" class="search-results"></div><div class="search-footer">搜索全部 {docs.length} 篇文档 <span>↑ ↓ 选择 · Enter 打开</span></div></dialog>
+    <script type="application/json" id="search-data" set:html={JSON.stringify(searchData).replace(/</g, '\\u003c')} />
+    <script>
+      const isMac = /Macintosh|iPhone|iPad/.test(navigator.userAgent);
+      document.querySelectorAll('kbd').forEach(kbd => { kbd.textContent = isMac ? '⌘ K' : 'Ctrl K'; });
+      const dialog = document.querySelector<HTMLDialogElement>('.search-dialog')!;
+      const input = document.querySelector<HTMLInputElement>('#search-input')!;
+      const results = document.querySelector<HTMLElement>('#search-results')!;
+      const entries: { title: string; description: string; body: string; category: string; href: string }[] = JSON.parse(document.querySelector('#search-data')!.textContent!);
+      let selected = -1;
+      function showResults() {
+        const terms = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        const matches = entries.filter(d => terms.every(term => `${d.title} ${d.description} ${d.category} ${d.body}`.toLowerCase().includes(term)));
+        results.replaceChildren(); selected = -1;
+        if (!matches.length) { const p = document.createElement('p'); p.className = 'search-empty'; p.textContent = '没有找到相关文档，试试其他关键词。'; results.append(p); }
+        for (const doc of matches) {
+          const link = document.createElement('a'); link.href = doc.href; link.className = 'search-result';
+          const label = document.createElement('small'); label.textContent = doc.category;
+          const title = document.createElement('strong'); title.textContent = doc.title;
+          const description = document.createElement('span'); description.textContent = doc.description;
+          link.append(label, title, description); results.append(link);
+        }
+      }
+      function openSearch() { dialog.showModal(); showResults(); input.focus(); }
+      document.querySelectorAll('[data-search-open]').forEach(button => button.addEventListener('click', openSearch));
+      document.querySelector('.close-search')!.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', e => { if (e.target === dialog) { const r = dialog.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close(); } });
+      input.addEventListener('input', showResults);
+      document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); if (dialog.open) dialog.close(); else openSearch(); } });
+      input.addEventListener('keydown', e => {
+        const links = [...results.querySelectorAll<HTMLAnchorElement>('a')];
+        if (['ArrowDown', 'ArrowUp'].includes(e.key) && links.length) { e.preventDefault(); selected = (selected + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length; links.forEach((l, i) => l.classList.toggle('is-selected', i === selected)); links[selected].scrollIntoView({ block: 'nearest' }); }
+        if (e.key === 'Enter' && links.length) { e.preventDefault(); links[Math.max(0, selected)].click(); }
+      });
+      const toggle = document.querySelector<HTMLButtonElement>('.mobile-toggle')!;
+      toggle.addEventListener('click', () => { const opened = document.body.classList.toggle('nav-open'); toggle.setAttribute('aria-expanded', String(opened)); });
+      document.querySelector('main')!.addEventListener('click', () => { document.body.classList.remove('nav-open'); toggle.setAttribute('aria-expanded', 'false'); });
+    </script>
+  </body>
+</html>

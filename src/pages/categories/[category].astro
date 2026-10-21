@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { categories } from '../../data/categories';
+import { getCollection } from 'astro:content';
+export function getStaticPaths() { return categories.map(category => ({ params: { category: category.id }, props: { category } })); }
+const { category } = Astro.props;
+const docs = (await getCollection('docs')).filter(d => d.data.category === category.id).sort((a, b) => a.data.order - b.data.order);
+---
+<Layout title={category.name} description={category.description}><div class="listing-content"><div class="breadcrumb"><a href="/">文档概览</a><Icon name="chevron" size={12} /><span>{category.name}</span></div><div class={`category-banner ${category.color}`}><span class="category-icon"><Icon name={category.icon} size={28} /></span><div class="eyebrow">{category.english}</div><h1>{category.name}</h1><p>{category.description}</p><span class="muted">{docs.length} 篇文档 · 按阅读顺序排列</span></div><div class="document-list">{docs.map((doc, i) => <a href={`/docs/${doc.id}/`}><span class="doc-number">{String(i + 1).padStart(2, '0')}</span><div><h2>{doc.data.title}</h2><p>{doc.data.description}</p><div class="doc-tags">{doc.data.tags.map(tag => <span>{tag}</span>)}</div></div><Icon name="arrow" size={20} /></a>)}</div><a class="back-link" href="/">← 返回文档概览</a></div></Layout>

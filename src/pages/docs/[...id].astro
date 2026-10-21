@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { categories } from '../../data/categories';
+export async function getStaticPaths() { return (await getCollection('docs')).map(doc => ({ params: { id: doc.id }, props: { doc } })); }
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+const category = categories.find(c => c.id === doc.data.category)!;
+const docs = (await getCollection('docs')).sort((a, b) => categories.findIndex(c => c.id === a.data.category) - categories.findIndex(c => c.id === b.data.category) || a.data.order - b.data.order);
+const index = docs.findIndex(d => d.id === doc.id);
+const previous = docs[index - 1]; const next = docs[index + 1];
+---
+<Layout title={doc.data.title} description={doc.data.description}><div class="article-layout"><div class="article-main"><div class="breadcrumb"><a href="/">文档概览</a><Icon name="chevron" size={12} /><a href={`/categories/${category.id}/`}>{category.name}</a><Icon name="chevron" size={12} /><span>{doc.data.title}</span></div><header class="article-header"><span class="article-category">{category.name}</span><h1>{doc.data.title}</h1><p>{doc.data.description}</p><div class="article-meta"><Icon name="clock" size={14} /><time datetime={doc.data.updated}>更新于 {doc.data.updated}</time><span>·</span><span>{Math.max(1, Math.ceil((doc.body?.length || 0) / 400))} 分钟阅读</span></div></header><article class="prose"><Content /></article><div class="article-note"><Icon name="book" size={17} /><span>本文档由 Markdown 驱动，随项目源码一同维护。</span></div><nav class="pagination" aria-label="前后文档">{previous ? <a href={`/docs/${previous.id}/`}><small>← 上一篇</small><strong>{previous.data.title}</strong></a> : <span />}{next && <a href={`/docs/${next.id}/`} class="next"><small>下一篇 →</small><strong>{next.data.title}</strong></a>}</nav><footer class="footer"><span>© {new Date().getFullYear()} AltasCI</span><a href="/docs/help/faq/">遇到问题？查看常见问题 →</a></footer></div><aside class="toc"><div>本页目录</div><nav>{headings.filter(h => h.depth === 2 || h.depth === 3).map(h => <a href={`#${h.slug}`} class:list={[{ indent: h.depth === 3 }]}>{h.text}</a>)}</nav><a class="toc-back" href="#main">返回顶部 ↑</a></aside></div></Layout>
+<script>
+  const headings = document.querySelectorAll('.prose h2, .prose h3');
+  const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { document.querySelectorAll('.toc nav a').forEach(a => a.classList.toggle('current', a.getAttribute('href') === `#${entry.target.id}`)); } }); }, { rootMargin: '-80px 0px -65% 0px' });
+  headings.forEach(h => observer.observe(h));
+  document.querySelectorAll('.prose pre').forEach(pre => { const button = document.createElement('button'); button.className = 'copy-code'; button.textContent = '复制'; button.setAttribute('aria-label', '复制代码'); button.addEventListener('click', async () => { try { await navigator.clipboard.writeText(pre.querySelector('code')!.textContent!); button.textContent = '已复制'; setTimeout(() => button.textContent = '复制', 1800); } catch { button.textContent = '请手动复制'; } }); pre.append(button); });
+</script>
