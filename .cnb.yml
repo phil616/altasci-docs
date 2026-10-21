@@ -43,7 +43,6 @@ main:
           timeout: 20m
           script: |
             set -eu
-            cd frontend
             export ALTASCI_DOC_BUILD_SHA=${CNB_COMMIT}
             npm run build
 
