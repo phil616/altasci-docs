@@ -33,6 +33,7 @@ AltasCI Docs 是中文文档网站，采用 Astro、TypeScript、Markdown 内容
 | `src/styles/theme.css` | 深色覆盖样式与主题按钮样式 |
 | `public/brand/altasci-logo-abg.png` | 桌面与手机页头使用的品牌 LOGO |
 | `public/favicon.ico` | 浏览器图标 |
+| `public/pki/certificates/` | 公开下载的 CA 证书及证书链（PEM） |
 | `astro.config.mjs` | 静态输出与双主题代码高亮配置 |
 
 `dist/`、`.astro/` 和 `node_modules/` 是生成结果，不要直接修改或作为源文件提交。`.qa/` 是被忽略的本地验证目录，其中的脚本可能含机器专属路径，不能当作可移植的项目测试入口。
@@ -96,6 +97,10 @@ tags: [Demo, 指南]
 - 其他 Markdown 中的文章链接和章节锚点。
 
 站内链接使用 `/docs/.../` 或 `/categories/.../`。移动、删除或重命名文档会改变 URL；更新所有引用，需要兼容旧地址时再按部署方式补充重定向。不要保留失效入口。
+
+### CA 证书下载
+
+`src/content/docs/pki/downloads.md` 是 PKI 分类的正式文件下载入口，与 Demo 文章区分。PEM 文件保存在 `public/pki/certificates/`，构建时原样复制；`localdev/` 仅为被忽略的本地来源目录，构建不应依赖它。发布前解析全部 PEM 块，确认只含证书、不含私钥，保留原始文件字节。替换文件时同步页面中的大小、CN、有效期、整个文件的 SHA-256 和首张证书的 SHA-256 指纹，并验证下载内容与源文件一致。链接使用同源地址和 `download` 属性，不自动安装证书或修改信任配置。
 
 ## 样式、品牌与交互
 

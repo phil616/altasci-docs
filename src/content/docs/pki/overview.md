@@ -30,6 +30,8 @@ tags: [Demo, PKI, 证书]
 
 ## 阅读顺序
 
+需要证书文件时，前往 [CA 证书下载](/docs/pki/downloads/) 获取根 CA 证书或签发 CA 证书链，并查看校验信息。下载页提供的文件与本文的演示场景分开说明。
+
 先阅读 [证书申请与更新](/docs/pki/lifecycle/)，再参考 [证书验证与排查](/docs/pki/verification/) 检查验证问题。
 
 ## 标准参考

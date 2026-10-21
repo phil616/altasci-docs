@@ -44,7 +44,7 @@ tags: [教程]
 
 ## 新增分类
 
-当前一级分类依次为：业务文档（`business`）、业务帮助（`help`）、公钥基础设施文档（`pki`）、错误代码（`errors`）、参考资料（`reference`）。每类提供三篇 Demo 文档，业务接口、状态、错误代码与流程均为示例约定，可根据实际服务替换。
+当前一级分类依次为：业务文档（`business`）、业务帮助（`help`）、公钥基础设施文档（`pki`）、错误代码（`errors`）、参考资料（`reference`）。每类提供三篇 Demo 文档，业务接口、状态、错误代码与流程均为示例约定，可根据实际服务替换。PKI 分类另有 CA 证书下载页，发布五个公开 PEM 文件。
 
 编辑 `src/data/categories.ts`，填写 `id`、`name`、`english`、`description`、`icon` 与 `color`。文章的 `category` 必须与分类 ID 对应。分类数组顺序决定导航顺序，`order` 决定分类内文章顺序。
 
@@ -58,6 +58,12 @@ tags: [教程]
 - `public/favicon.ico`：浏览器网站图标。
 
 ## 部署
+
+### CA 证书文件
+
+公开下载文件存放于 `public/pki/certificates/`，页面为 `/docs/pki/downloads/`，源码为 `src/content/docs/pki/downloads.md`。`localdev/` 是被忽略的本地来源目录，部署不依赖该目录。更新证书时仅复制公开证书，保留原始字节，并同步下载页的证书名称、有效期、文件大小、文件 SHA-256 和证书指纹。证书指纹对应首张证书，文件校验值对应整个 PEM 文件。
+
+### 静态部署
 
 运行 `npm ci && npm run check && npm run build`，将 `dist/` 发布到静态网站服务器。当前按域名根路径部署设计；服务器需支持目录索引和 `404.html`。本站不依赖数据库或服务端运行时。
 

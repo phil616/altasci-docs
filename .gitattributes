@@ -1,0 +1,2 @@
+# Preserve published certificate bytes and their documented SHA-256 checksums.
+public/pki/certificates/*.pem -text
