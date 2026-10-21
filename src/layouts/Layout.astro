@@ -10,12 +10,14 @@ const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.
 const path = Astro.url.pathname;
 const active = (url: string) => path.replace(/\/$/, '') === url.replace(/\/$/, '');
 const searchData = docs.map(d => ({ title: d.data.title, description: d.data.description, body: d.body, category: categories.find(c => c.id === d.data.category)?.name, href: `/docs/${d.id}/` }));
+const buildSha = import.meta.env.ALTASCI_DOC_BUILD_SHA?.trim() || '';
 ---
 <!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} /><meta name="theme-color" content="#f8f9fc" />
+    {buildSha && <script define:vars={{ buildSha }}>console.info('[AltasCI Docs] Build SHA:', buildSha);</script>}
     <script is:inline>
       (() => {
         const key = 'altasci-theme';

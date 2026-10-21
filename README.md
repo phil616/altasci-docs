@@ -61,4 +61,13 @@ tags: [教程]
 
 运行 `npm ci && npm run check && npm run build`，将 `dist/` 发布到静态网站服务器。当前按域名根路径部署设计；服务器需支持目录索引和 `404.html`。本站不依赖数据库或服务端运行时。
 
+构建时可通过环境变量注入版本 SHA（Bash / CI）：
+
+```bash
+export ALTASCI_DOC_BUILD_SHA='xxx'
+npm run build
+```
+
+PowerShell 使用 `$env:ALTASCI_DOC_BUILD_SHA = 'xxx'` 后运行 `npm run build`。设置后，构建终端及每个页面的浏览器 Console 会输出 `[AltasCI Docs] Build SHA: xxx`（构建终端的日志前缀由 Astro 提供）。未设置或为空时不输出。SHA 写入静态页面，修改后需重新构建。
+
 内容为中文示例，可按业务替换。搜索为浏览器内置的文本匹配，适合中小型文档集；大量文档时建议切换独立搜索索引。字体从 Google Fonts 加载，网络不可达时使用系统字体；完全离线使用时移除 CSS 首行的字体导入。
