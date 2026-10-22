@@ -44,7 +44,7 @@ tags: [教程]
 
 ## 新增分类
 
-当前一级分类依次为：业务文档（`business`）、业务帮助（`help`）、公钥基础设施文档（`pki`）、错误代码（`errors`）、参考资料（`reference`）。每类提供三篇 Demo 文档，业务接口、状态、错误代码与流程均为示例约定，可根据实际服务替换。PKI 分类另有 CA 证书下载页，发布五个公开 PEM 文件。
+当前一级分类依次为：业务文档（`business`）、业务帮助（`help`）、公钥基础设施文档（`pki`）、错误代码（`errors`）、参考资料（`reference`）。业务接口、状态、错误代码与流程均为 Demo 示例约定，可根据实际服务替换。PKI 分类另有 CA 证书下载页和企业 OpenPGP 公钥与验证文章，分别发布公开 PEM 证书与 OpenPGP 公钥材料。
 
 编辑 `src/data/categories.ts`，填写 `id`、`name`、`english`、`description`、`icon` 与 `color`。文章的 `category` 必须与分类 ID 对应。分类数组顺序决定导航顺序，`order` 决定分类内文章顺序。
 
@@ -62,6 +62,12 @@ tags: [教程]
 ### CA 证书文件
 
 公开下载文件存放于 `public/pki/certificates/`，页面为 `/docs/pki/downloads/`，源码为 `src/content/docs/pki/downloads.md`。`localdev/` 是被忽略的本地来源目录，部署不依赖该目录。更新证书时仅复制公开证书，保留原始字节，并同步下载页的证书名称、有效期、文件大小、文件 SHA-256 和证书指纹。证书指纹对应首张证书，文件校验值对应整个 PEM 文件。
+
+### OpenPGP 公钥文件
+
+公开公钥存放于 `public/pki/openpgp/`，文章为 `/docs/pki/openpgp/`，源码为 `src/content/docs/pki/openpgp.md`。仅将 `localdev/` 中核验过的公开材料复制到发布目录，构建不依赖本地来源目录。四个 `.asc` 文件保留原始字节；发布用 `SHA256SUMS` 使用相对文件名，不保留来源机器的绝对路径。
+
+更新时解析全部 OpenPGP 包，确认不含私钥或其他非预期内容；在独立 GnuPG 密钥环中核对主密钥与子密钥完整指纹、UID、用途、有效期及认证签名，同步文章的文件大小、SHA-256 和当前限制，并确认构建后的下载文件与发布源文件字节一致。不要将本地 ownertrust 导出为发布材料，也不要把认证关系描述为实时在职或业务授权证明。
 
 ### 静态部署
 

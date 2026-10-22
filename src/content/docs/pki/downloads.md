@@ -3,13 +3,15 @@ title: CA 证书下载
 description: 下载 AltasCI 根 CA 证书及四组签发 CA 证书链，查看有效期与 SHA-256 校验值。
 category: pki
 order: 5
-updated: '2026-10-21'
+updated: '2026-10-22'
 tags: [PKI, 证书, 下载]
 ---
 
 ## 下载列表
 
 此页面提供 AltasCI 的五个公开 PEM 证书文件。根证书文件包含一张证书，其余四个文件均包含签发 CA 证书及根 CA 证书。文件不包含私钥。
+
+需要企业 GPG 公钥时，请前往 [企业 OpenPGP 公钥与验证](/docs/pki/openpgp/)，下载认证链与人员公钥，并核对完整指纹。两类文件的格式和用途不同。
 
 点击下方链接下载；如浏览器直接打开文件，可使用“链接另存为”保存为 `.pem`。
 

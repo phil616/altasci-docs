@@ -34,6 +34,7 @@ AltasCI Docs 是中文文档网站，采用 Astro、TypeScript、Markdown 内容
 | `public/brand/altasci-logo-abg.png` | 桌面与手机页头使用的品牌 LOGO |
 | `public/favicon.ico` | 浏览器图标 |
 | `public/pki/certificates/` | 公开下载的 CA 证书及证书链（PEM） |
+| `public/pki/openpgp/` | 公开下载的企业 OpenPGP 公钥、认证链与校验清单 |
 | `astro.config.mjs` | 静态输出与双主题代码高亮配置 |
 
 `dist/`、`.astro/` 和 `node_modules/` 是生成结果，不要直接修改或作为源文件提交。`.qa/` 是被忽略的本地验证目录，其中的脚本可能含机器专属路径，不能当作可移植的项目测试入口。
@@ -101,6 +102,10 @@ tags: [Demo, 指南]
 ### CA 证书下载
 
 `src/content/docs/pki/downloads.md` 是 PKI 分类的正式文件下载入口，与 Demo 文章区分。PEM 文件保存在 `public/pki/certificates/`，构建时原样复制；`localdev/` 仅为被忽略的本地来源目录，构建不应依赖它。发布前解析全部 PEM 块，确认只含证书、不含私钥，保留原始文件字节。替换文件时同步页面中的大小、CN、有效期、整个文件的 SHA-256 和首张证书的 SHA-256 指纹，并验证下载内容与源文件一致。链接使用同源地址和 `download` 属性，不自动安装证书或修改信任配置。
+
+### OpenPGP 公钥下载
+
+`src/content/docs/pki/openpgp.md` 提供企业 OpenPGP 公钥下载与验证说明，公开材料位于 `public/pki/openpgp/`。发布前解析全部 OpenPGP 包，确认只含预期公钥、UID、认证签名及公钥子密钥，不含私钥；保留 `.asc` 原始字节。校验清单使用相对文件名，不写入机器专属路径。替换文件时同步正文中的大小、SHA-256、完整指纹、UID、算法用途、有效期与当前限制，在独立密钥环中核验认证关系，并验证构建后的下载文件与发布源文件一致。下载链接使用同源地址与 `download` 属性，不自动导入或修改用户信任设置。区分文件完整性、公钥身份、ownertrust 与实时人员状态，不编造独立指纹渠道或撤销服务。
 
 ## 样式、品牌与交互
 
