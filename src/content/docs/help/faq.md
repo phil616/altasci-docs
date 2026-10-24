@@ -3,7 +3,7 @@ title: 业务常见问题
 description: 查找项目访问、订单状态和证书使用中的示例问题。
 category: help
 order: 20
-updated: '2026-10-21'
+updated: '2026-10-24'
 tags: [Demo, FAQ]
 ---
 
@@ -21,11 +21,11 @@ Demo 流程中草稿允许编辑，提交后的配置修改需先确认当前状
 
 ## 找不到错误代码怎么办？
 
-保留错误代码、HTTP 状态、时间和 `request_id`，按 [支持流程](/docs/help/support/) 提供线索。当前代码表为 Demo，不覆盖真实系统的全部响应。
+先在 [服务访问错误代码](/docs/errors/access-errors/) 中查找 `E` 系列代码，接口演示代码见 [错误代码总览](/docs/errors/overview/)。仍未找到时，保留错误代码、HTTP 状态、时间和 Request ID，按 [支持流程](/docs/help/support/) 提供线索。
 
 ## 更新证书后为什么仍提示过期？
 
-确认应用已加载更新后的证书、证书链完整且客户端时间正确。
+确认应用已加载更新后的证书、证书链完整且客户端时间正确。如服务返回 `E006`，按 [服务访问错误代码](/docs/errors/access-errors/) 核对签发链、有效期与吊销状态。
 
 ## 可以在这里办理业务吗？
 

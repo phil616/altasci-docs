@@ -46,6 +46,8 @@ tags: [教程]
 
 当前一级分类依次为：业务文档（`business`）、业务帮助（`help`）、公钥基础设施文档（`pki`）、错误代码（`errors`）、参考资料（`reference`）。业务接口、状态、错误代码与流程均为 Demo 示例约定，可根据实际服务替换。PKI 分类另有 CA 证书下载页和企业 OpenPGP 公钥与验证文章，分别发布公开 PEM 证书与 OpenPGP 公钥材料。
 
+错误代码分类同时收录一组真实内容：服务访问错误代码（`E001` 至 `E008`），页面为 `/docs/errors/access-errors/`，源码为 `src/content/docs/errors/access-errors.md`。它与演示接口错误代码编号方式不同，需分开维护，不要互相套用措辞。
+
 编辑 `src/data/categories.ts`，填写 `id`、`name`、`english`、`description`、`icon` 与 `color`。文章的 `category` 必须与分类 ID 对应。分类数组顺序决定导航顺序，`order` 决定分类内文章顺序。
 
 ## 主要文件
