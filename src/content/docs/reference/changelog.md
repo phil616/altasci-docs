@@ -3,9 +3,15 @@ title: 更新日志
 description: 记录文档中心的分类、内容与阅读体验更新。
 category: reference
 order: 30
-updated: '2026-10-24'
-tags: [Demo, 更新]
+updated: '2026-10-29'
+tags: [更新]
 ---
+
+## 2026-10-29 · CI/CD 文档
+
+新增「CI/CD 文档」分类，整理[体系总览](/docs/cicd/overview/)、[应用形态](/docs/cicd/deployment-types/)、[CI 平台](/docs/cicd/ci-platforms/)、[CNB 流水线](/docs/cicd/cnb-pipelines/)、[部署目标](/docs/cicd/deployment-platforms/)、[凭据管理](/docs/cicd/credentials/)和[连接方式](/docs/cicd/connections/)七篇文章。
+
+文章面向公开阅读，保留流程与技术约定，配置片段使用明确标注的示例参数。分类页、导航、搜索及 `/llm.txt` 和单篇 Markdown 读取入口随构建更新。
 
 ## v1.2.0 · 服务访问错误代码
 

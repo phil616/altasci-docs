@@ -64,7 +64,9 @@ tags: [教程]
 
 ## 新增分类
 
-当前一级分类依次为：业务文档（`business`）、业务帮助（`help`）、公钥基础设施文档（`pki`）、错误代码（`errors`）、参考资料（`reference`）。业务接口、状态、错误代码与流程均为 Demo 示例约定，可根据实际服务替换。PKI 分类另有 CA 证书下载页和企业 OpenPGP 公钥与验证文章，分别发布公开 PEM 证书与 OpenPGP 公钥材料。
+当前一级分类依次为：业务文档（`business`）、业务帮助（`help`）、CI/CD 文档（`cicd`）、公钥基础设施文档（`pki`）、错误代码（`errors`）、参考资料（`reference`）。业务接口、状态、错误代码与流程中的 Demo 为示例约定，可根据实际服务替换。PKI 分类另有 CA 证书下载页和企业 OpenPGP 公钥与验证文章，分别发布公开 PEM 证书与 OpenPGP 公钥材料。
+
+CI/CD 分类入口为 `/categories/cicd/`，阅读起点为 `/docs/cicd/overview/`。正文存放于 `src/content/docs/cicd/`，覆盖体系总览、应用形态、CI 平台、CNB 流水线、部署目标、凭据与连接方式。文章介绍 AltasCI 的交付实践，配置片段单独标注为示例，不代表文档站提供流水线执行或服务器操作能力。维护时核对相关平台的官方文档，不发布内部主机清单、实际密钥仓库路径或凭据；`localdev/` 仅作本地来源，构建不依赖它。
 
 错误代码分类同时收录一组真实内容：服务访问错误代码（`E001` 至 `E008`），页面为 `/docs/errors/access-errors/`，源码为 `src/content/docs/errors/access-errors.md`。它与演示接口错误代码编号方式不同，需分开维护，不要互相套用措辞。
 
