@@ -27,6 +27,9 @@ AltasCI Docs 是中文文档网站，采用 Astro、TypeScript、Markdown 内容
 | `src/pages/index.astro` | 首页、推荐阅读和最近更新 |
 | `src/pages/categories/[category].astro` | 分类列表页与静态路由 |
 | `src/pages/docs/[...id].astro` | 文章渲染、目录、前后篇与代码复制 |
+| `src/lib/agent-docs.ts` | AI Agent Markdown 转换与完整文章索引生成 |
+| `src/pages/docs/[...id].md.ts` | 每篇文章的静态 Markdown 读取地址 |
+| `src/pages/llm.txt.ts`、`src/pages/llms.txt.ts` | AI Agent 固定索引入口及兼容入口 |
 | `src/pages/404.astro` | 未找到页面 |
 | `src/components/Icon.astro` | 内置 SVG 图标 |
 | `src/styles/global.css` | 浅色基础样式与响应式布局 |
@@ -99,6 +102,14 @@ tags: [Demo, 指南]
 
 站内链接使用 `/docs/.../` 或 `/categories/.../`。移动、删除或重命名文档会改变 URL；更新所有引用，需要兼容旧地址时再按部署方式补充重定向。不要保留失效入口。
 
+### AI Agent 读取
+
+`/llm.txt` 是固定索引入口，`/llms.txt` 提供相同内容；每篇文章对应 `/docs/<文章 ID>.md`，末尾不加斜杠。索引与 Markdown 从内容集合在构建时生成，不维护独立正文，不在 `public/` 中创建同名文件。分类顺序复用 `src/data/categories.ts`，分类内按文章 `order` 排序。
+
+输出保留标题、摘要、分类、更新日期、标签和正文，移除 Frontmatter 与网页布局；正文内嵌 HTML 转为 Markdown，保留附件目标、Demo 提示和实际内容范围。代码块及行内代码保留示例内容，不用正则全局删除 HTML 标签。站内文章链接只改写已存在文章的地址，并保留查询参数与锚点，不改写代码示例或附件地址。全局布局的 HTML 头部声明索引入口，文章页另声明 Markdown 地址。
+
+修改转换、路由或索引时，运行 `npm run test:agent-docs`，并完成 `check` 和 `build`。检查生成的索引覆盖全部文章，逐篇 Markdown 文件存在，下载目标和站内文章链接可访问。静态托管需要正确发布 `.txt`、`.md`，设置 UTF-8 文本 MIME，并让不存在的文章返回 404；不能假设构建端点的响应头会直接成为 CDN 或 Nginx 响应头。
+
 ### CA 证书下载
 
 `src/content/docs/pki/downloads.md` 是 PKI 分类的正式文件下载入口，与 Demo 文章区分。PEM 文件保存在 `public/pki/certificates/`，构建时原样复制；`localdev/` 仅为被忽略的本地来源目录，构建不应依赖它。发布前解析全部 PEM 块，确认只含证书、不含私钥，保留原始文件字节。替换文件时同步页面中的大小、CN、有效期、整个文件的 SHA-256 和首张证书的 SHA-256 指纹，并验证下载内容与源文件一致。链接使用同源地址和 `download` 属性，不自动安装证书或修改信任配置。
@@ -130,6 +141,7 @@ tags: [Demo, 指南]
 npm ci
 npm run dev
 npm run check
+npm run test:agent-docs
 npm run build
 npm run preview
 ```

@@ -9,6 +9,7 @@ const { title = '文档中心', description = 'AltasCI 文档中心：让知识�
 const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
 const path = Astro.url.pathname;
 const active = (url: string) => path.replace(/\/$/, '') === url.replace(/\/$/, '');
+const currentDoc = docs.find(doc => active(`/docs/${doc.id}`));
 const searchData = docs.map(d => ({ title: d.data.title, description: d.data.description, body: d.body, category: categories.find(c => c.id === d.data.category)?.name, href: `/docs/${d.id}/` }));
 const buildSha = import.meta.env.ALTASCI_DOC_BUILD_SHA?.trim() || '';
 ---
@@ -17,6 +18,8 @@ const buildSha = import.meta.env.ALTASCI_DOC_BUILD_SHA?.trim() || '';
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} /><meta name="theme-color" content="#f8f9fc" />
+    <link rel="alternate" type="text/plain" href="/llm.txt" title="AI Agent 文章索引与获取说明" />
+    {currentDoc && <link rel="alternate" type="text/markdown" href={`/docs/${currentDoc.id}.md`} title="本文的 Markdown 版本" />}
     {buildSha && <script define:vars={{ buildSha }}>console.info('[AltasCI Docs] Build SHA:', buildSha);</script>}
     <script is:inline>
       (() => {
